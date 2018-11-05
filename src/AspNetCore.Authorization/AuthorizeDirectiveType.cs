@@ -7,7 +7,7 @@ using HotChocolate.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
-namespace AspNetCore.Authorization
+namespace HotChocolate.AspNetCore
 {
     public class AuthorizeDirectiveType
         : DirectiveType<AuthorizeDirective>
