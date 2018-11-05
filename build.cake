@@ -135,7 +135,7 @@ Task("SonarBegin")
     SonarBegin(new SonarBeginSettings{
         Url = "https://sonarcloud.io",
         Login = sonarLogin,
-        Key = "HotChocolate",
+        Key = "HotChocolate-AspNetCore",
         Organization = "chillicream",
         VsTestReportsPath = "**/*.trx",
         OpenCoverReportsPath = "**/*.opencover.xml",
@@ -179,7 +179,7 @@ Task("Sonar")
     .IsDependentOn("SonarEnd");
 
 Task("Release")
-    .IsDependentOn("Sonar")
+    // .IsDependentOn("Sonar")
     .IsDependentOn("Publish");
 
 //////////////////////////////////////////////////////////////////////
