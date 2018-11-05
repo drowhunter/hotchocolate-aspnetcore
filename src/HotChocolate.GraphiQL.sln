@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.GraphiQL", "AspNetCore.GraphiQL\AspNetCore.GraphiQL.csproj", "{491B8388-C02C-4111-83E9-C2DD9A889E4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Authorization", "AspNetCore.Authorization\AspNetCore.Authorization.csproj", "{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{491B8388-C02C-4111-83E9-C2DD9A889E4F}.Release|x64.Build.0 = Release|Any CPU
 		{491B8388-C02C-4111-83E9-C2DD9A889E4F}.Release|x86.ActiveCfg = Release|Any CPU
 		{491B8388-C02C-4111-83E9-C2DD9A889E4F}.Release|x86.Build.0 = Release|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Debug|x64.Build.0 = Debug|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Debug|x86.Build.0 = Debug|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Release|x64.ActiveCfg = Release|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Release|x64.Build.0 = Release|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Release|x86.ActiveCfg = Release|Any CPU
+		{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
