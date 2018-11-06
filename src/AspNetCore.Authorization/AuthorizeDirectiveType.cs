@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using HotChocolate.Execution;
@@ -29,15 +30,16 @@ namespace HotChocolate.AspNetCore
             DirectiveDelegate next)
         {
             var authorizeService = context.Service<IAuthorizationService>();
-            var httpContext = context.Service<HttpContext>();
+            var principal = context.CustomProperty<ClaimsPrincipal>(
+                typeof(ClaimsPrincipal).FullName);
             var directive = context.Directive.ToObject<AuthorizeDirective>();
 
-            bool allowed = IsInRoles(httpContext.User, directive.Roles);
+            bool allowed = IsInRoles(principal, directive.Roles);
 
             if (allowed && !string.IsNullOrEmpty(directive.Policy))
             {
                 allowed = await authorizeService
-                    .AuthorizeAsync(httpContext.User, directive.Policy);
+                    .AuthorizeAsync(principal, directive.Policy);
             }
 
             if (allowed)

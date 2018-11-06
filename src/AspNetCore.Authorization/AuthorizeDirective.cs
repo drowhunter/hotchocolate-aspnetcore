@@ -43,6 +43,4 @@ namespace HotChocolate.AspNetCore
         /// </summary>
         public IReadOnlyCollection<string> Roles { get; }
     }
-
-
 }

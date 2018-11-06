@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using HotChocolate.Execution;
@@ -44,6 +47,10 @@ namespace HotChocolate.AspNetCore
             QueryExecuter queryExecuter)
         {
             Execution.QueryRequest request = await CreateQueryRequest(context);
+            request.Properties = new Dictionary<string, object>
+            {
+                { typeof(ClaimsPrincipal).FullName, context.User }
+            };
 
             IExecutionResult result = await queryExecuter
                 .ExecuteAsync(request, context.RequestAborted)
