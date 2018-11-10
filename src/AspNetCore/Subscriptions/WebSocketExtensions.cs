@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
@@ -60,9 +61,27 @@ namespace HotChocolate.AspNetCore.Subscriptions
                 {
                     Type = MessageTypes.Subscription.Data,
                     Id = id,
-                    Payload = result.ToDictionary()
+                    Payload = ToDictionary(result)
                 },
                 cancellationToken);
+        }
+
+        private static IReadOnlyDictionary<string, object> ToDictionary(
+            IQueryExecutionResult result)
+        {
+            var internalResult = new Dictionary<string, object>();
+
+            if (result.Errors != null && result.Errors.Count > 0)
+            {
+                internalResult["errors"] = result.Errors;
+            }
+
+            if (result.Data != null && result.Data.Count > 0)
+            {
+                internalResult["data"] = result.Data;
+            }
+
+            return internalResult;
         }
 
         public static Task SendSubscriptionCompleteMessageAsync(

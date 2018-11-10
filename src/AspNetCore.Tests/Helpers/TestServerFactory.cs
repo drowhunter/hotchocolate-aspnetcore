@@ -14,18 +14,18 @@ namespace HotChocolate.AspNetCore
 
         public TestServer Create(
             Action<ISchemaConfiguration> configure,
-            string route)
+            GraphQLMiddlewareOptions options)
         {
-            return Create(configure, null, route);
+            return Create(configure, null, options);
         }
 
         public TestServer Create(
             Action<ISchemaConfiguration> configure,
             Action<IServiceCollection> configureServices,
-            string route)
+            GraphQLMiddlewareOptions options)
         {
             IWebHostBuilder builder = new WebHostBuilder()
-                .Configure(app => app.UseGraphQL(route))
+                .Configure(app => app.UseGraphQL(options))
                 .ConfigureServices(services =>
                 {
                     configureServices?.Invoke(services);

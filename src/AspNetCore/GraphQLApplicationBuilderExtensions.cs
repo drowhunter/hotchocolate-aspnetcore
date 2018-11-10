@@ -1,4 +1,7 @@
+using System;
+using System.Threading.Tasks;
 using HotChocolate.AspNetCore;
+using HotChocolate.Execution;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
@@ -9,32 +12,58 @@ namespace HotChocolate
         public static IApplicationBuilder UseGraphQL(
             this IApplicationBuilder applicationBuilder)
         {
-            return applicationBuilder.UseMiddleware<PostQueryMiddleware>()
-                .UseMiddleware<GetQueryMiddleware>()
-                .UseGraphQLSubscriptions("/ws");
+            return UseGraphQL(applicationBuilder,
+                new GraphQLMiddlewareOptions());
         }
 
         public static IApplicationBuilder UseGraphQL(
             this IApplicationBuilder applicationBuilder,
-            PathString route)
+            PathString path)
         {
-            if (route == null)
+            var options = new GraphQLMiddlewareOptions
             {
-                return UseGraphQL(applicationBuilder);
-            }
+                Path = path.HasValue ? path : new PathString("/")
+            };
 
-            return applicationBuilder.Map(route,
-                app => app.UseMiddleware<PostQueryMiddleware>()
-                    .UseMiddleware<GetQueryMiddleware>())
-                .UseGraphQLSubscriptions(route + "/ws");
+            return UseGraphQL(applicationBuilder, options);
         }
 
-        private static IApplicationBuilder UseGraphQLSubscriptions(
+        public static IApplicationBuilder UseGraphQL(
             this IApplicationBuilder applicationBuilder,
-            PathString route)
+            GraphQLMiddlewareOptions options)
         {
-            return applicationBuilder.Map(route,
-                app => app.UseMiddleware<SubscriptionMiddleware>());
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            return applicationBuilder
+                .UseMiddleware<PostQueryMiddleware>(options)
+                .UseMiddleware<GetQueryMiddleware>(options)
+                .UseMiddleware<SubscriptionMiddleware>(options);
+        }
+
+        public static IApplicationBuilder UseGraphQL(
+            this IApplicationBuilder applicationBuilder,
+            ISchema schema,
+            GraphQLMiddlewareOptions options)
+        {
+            if (schema == null)
+            {
+                throw new ArgumentNullException(nameof(schema));
+            }
+
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            var executer = new QueryExecuter(schema, options.QueryCacheSize);
+
+            return applicationBuilder
+                .UseMiddleware<PostQueryMiddleware>(executer, options)
+                .UseMiddleware<GetQueryMiddleware>(executer, options)
+                .UseMiddleware<SubscriptionMiddleware>(executer, options);
         }
     }
 }

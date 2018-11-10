@@ -1,3 +1,4 @@
+using HotChocolate.AspNetCore;
 using HotChocolate.Types;
 using StarWars.Models;
 
@@ -15,8 +16,11 @@ namespace StarWars.Types
             descriptor.Field(t => t.GetCharacter(default, default))
                 .Type<NonNullType<ListType<NonNullType<CharacterType>>>>();
 
+            // the search can only be executed if the current
+            // identity has a country
             descriptor.Field(t => t.Search(default))
-                .Type<ListType<SearchResultType>>();
+                .Type<ListType<SearchResultType>>()
+                .Directive(new AuthorizeDirective("HasCountry"));
         }
     }
 

@@ -18,11 +18,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="0.6.0-preview-8" />
+    <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="0.6.0-rc-1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AspNetCore\AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\AspNetCore.Authorization\AspNetCore.Authorization.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore.GraphiQL\AspNetCore.GraphiQL.csproj" />
   </ItemGroup>
 

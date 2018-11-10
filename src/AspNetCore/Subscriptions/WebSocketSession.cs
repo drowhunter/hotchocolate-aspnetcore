@@ -11,7 +11,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
 {
     // TODO : Keep Alive
     // TODO : Hanlde close status
-    public class WebSocketSession
+    public sealed class WebSocketSession
         : IDisposable
     {
         private const string _protocol = "graphql-ws";
@@ -112,7 +112,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
 
         public void Dispose()
         {
-
+            _cts.Dispose();
         }
 
         public static async Task<WebSocketSession> TryCreateAsync(

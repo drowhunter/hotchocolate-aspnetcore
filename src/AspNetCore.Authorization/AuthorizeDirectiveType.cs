@@ -31,15 +31,16 @@ namespace HotChocolate.AspNetCore
         {
             var authorizeService = context.Service<IAuthorizationService>();
             var principal = context.CustomProperty<ClaimsPrincipal>(
-                typeof(ClaimsPrincipal).FullName);
+                nameof(ClaimsPrincipal));
             var directive = context.Directive.ToObject<AuthorizeDirective>();
 
             bool allowed = IsInRoles(principal, directive.Roles);
 
             if (allowed && !string.IsNullOrEmpty(directive.Policy))
             {
-                allowed = await authorizeService
+                AuthorizationResult result = await authorizeService
                     .AuthorizeAsync(principal, directive.Policy);
+                allowed = result.Succeeded;
             }
 
             if (allowed)

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HotChocolate.Execution;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using ExecQueryRequest = HotChocolate.Execution.QueryRequest;
 
 namespace HotChocolate.AspNetCore
 {
@@ -15,8 +16,9 @@ namespace HotChocolate.AspNetCore
 
         public PostQueryMiddleware(
             RequestDelegate next,
-            QueryExecuter queryExecuter)
-            : base(next, queryExecuter)
+            QueryExecuter queryExecuter,
+            GraphQLMiddlewareOptions options)
+            : base(next, queryExecuter, options)
         {
         }
 
@@ -27,12 +29,13 @@ namespace HotChocolate.AspNetCore
                 StringComparison.Ordinal);
         }
 
-        protected override async Task<Execution.QueryRequest> CreateQueryRequest(
+        protected override async Task<ExecQueryRequest> CreateQueryRequest(
             HttpContext context)
         {
-            QueryRequest request = await ReadRequestAsync(context);
+            QueryRequestDto request = await ReadRequestAsync(context)
+                .ConfigureAwait(false); ;
 
-            return new Execution.QueryRequest(
+            return new ExecQueryRequest(
                 request.Query, request.OperationName)
             {
                 VariableValues = QueryMiddlewareUtilities
@@ -42,14 +45,16 @@ namespace HotChocolate.AspNetCore
             };
         }
 
-        private static async Task<QueryRequest> ReadRequestAsync(
+        private static async Task<QueryRequestDto> ReadRequestAsync(
             HttpContext context)
         {
             using (StreamReader reader = new StreamReader(
                 context.Request.Body, Encoding.UTF8))
             {
-                string json = await reader.ReadToEndAsync();
-                return JsonConvert.DeserializeObject<QueryRequest>(json);
+                string json = await reader.ReadToEndAsync()
+                    .ConfigureAwait(false);
+
+                return JsonConvert.DeserializeObject<QueryRequestDto>(json);
             }
         }
     }

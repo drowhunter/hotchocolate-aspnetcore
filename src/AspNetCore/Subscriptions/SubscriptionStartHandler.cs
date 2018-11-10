@@ -17,7 +17,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
             GenericOperationMessage message,
             CancellationToken cancellationToken)
         {
-            QueryRequest request = message.Payload.ToObject<QueryRequest>();
+            QueryRequestDto request = message.Payload.ToObject<QueryRequestDto>();
 
             IExecutionResult result = await context.QueryExecuter.ExecuteAsync(
                 new Execution.QueryRequest(request.Query, request.OperationName)

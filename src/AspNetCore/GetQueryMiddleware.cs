@@ -19,8 +19,9 @@ namespace HotChocolate.AspNetCore
 
         public GetQueryMiddleware(
             RequestDelegate next,
-            QueryExecuter queryExecuter)
-            : base(next, queryExecuter)
+            QueryExecuter queryExecuter,
+            GraphQLMiddlewareOptions options)
+            : base(next, queryExecuter, options)
         {
         }
 
@@ -35,7 +36,7 @@ namespace HotChocolate.AspNetCore
         protected override Task<Execution.QueryRequest> CreateQueryRequest(
             HttpContext context)
         {
-            QueryRequest request = ReadRequest(context);
+            QueryRequestDto request = ReadRequest(context);
 
             return Task.FromResult(
                 new Execution.QueryRequest(request.Query, request.OperationName)
@@ -47,12 +48,12 @@ namespace HotChocolate.AspNetCore
                 });
         }
 
-        private static QueryRequest ReadRequest(HttpContext context)
+        private static QueryRequestDto ReadRequest(HttpContext context)
         {
             IQueryCollection requestQuery = context.Request.Query;
             StringValues variables = requestQuery[_variablesIdentifier];
 
-            return new QueryRequest
+            return new QueryRequestDto
             {
                 Query = requestQuery[_queryIdentifier],
                 NamedQuery = requestQuery[_namedQueryIdentifier],

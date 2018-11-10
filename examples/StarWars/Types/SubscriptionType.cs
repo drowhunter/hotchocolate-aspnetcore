@@ -7,8 +7,8 @@ namespace StarWars.Types
     {
         protected override void Configure(IObjectTypeDescriptor<Subscription> descriptor)
         {
-            descriptor.Field(t => t.OnReview(default))
-                .Type<ListType<NonNullType<ReviewType>>>()
+            descriptor.Field(t => t.OnReview(default, default))
+                .Type<NonNullType<ReviewType>>()
                 .Argument("episode", arg => arg.Type<NonNullType<EpisodeType>>());
         }
     }

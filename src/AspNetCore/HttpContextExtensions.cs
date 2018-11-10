@@ -5,10 +5,10 @@ namespace HotChocolate.AspNetCore
 {
     internal static class HttpContextExtensions
     {
-        public static bool IsRouteValid(this HttpContext context, string route)
+        public static bool IsValidPath(this HttpContext context, PathString path)
         {
-            string path = context.Request.Path.ToUriComponent();
-            return string.Equals(route, path, StringComparison.Ordinal);
+            return context.Request.Path.StartsWithSegments(
+                path, out _, out _);
         }
     }
 }

@@ -1,8 +1,8 @@
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 
 namespace HotChocolate.AspNetCore
 {
-    internal class QueryRequest
+    internal class ClientQueryRequest
     {
         public string OperationName { get; set; }
         public string NamedQuery { get; set; }

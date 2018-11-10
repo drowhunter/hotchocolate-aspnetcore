@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HotChocolate;
+using HotChocolate.AspNetCore;
 using HotChocolate.Subscriptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +39,10 @@ namespace StarWars
             {
                 c.RegisterServiceProvider(sp);
 
+                // Adds the authorize directive and
+                // enable the authorization middleware.
+                c.RegisterAuthorizeDirectiveType();
+
                 c.RegisterQueryType<QueryType>();
                 c.RegisterMutationType<MutationType>();
                 c.RegisterSubscriptionType<SubscriptionType>();
@@ -45,6 +51,15 @@ namespace StarWars
                 c.RegisterType<DroidType>();
                 c.RegisterType<EpisodeType>();
             }));
+
+            // Add Authorization Policy
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("HasCountry", policy =>
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c =>
+                            (c.Type == ClaimTypes.Country))));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,14 +72,26 @@ namespace StarWars
 
             app.UseWebSockets();
 
-            app.UseGraphiQL(new GraphiQLOptions
-            {
-                Route = "/graphql/ui",
-                QueryRoute = "/graphql",
-                SubscriptionRoute = "/graphql/ws"
-            });
-
             app.UseGraphQL("/graphql");
+            app.UseGraphiQL("/graphql");
+
+            /*
+            Note: comment app.UseGraphQL("/graphql"); and uncomment this
+            section in order to simulare a user that has a country claim and
+            passes the configured authorization rule.
+
+            app.UseGraphQL(new GraphQLMiddlewareOptions
+            {
+                Path = "/graphql",
+                OnCreateRequest = (c, r, p) =>
+                {
+                    var identity = new ClaimsIdentity();
+                    identity.AddClaim(new Claim(ClaimTypes.Country, "us"));
+                    c.User.AddIdentity(identity);
+                    return Task.CompletedTask;
+                }
+            });
+            */
         }
     }
 }

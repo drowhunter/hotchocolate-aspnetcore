@@ -7,17 +7,18 @@ using Newtonsoft.Json.Linq;
 
 namespace HotChocolate.AspNetCore
 {
-    public static class QueryMiddlewareUtilities
+    internal static class QueryMiddlewareUtilities
     {
         public static Dictionary<string, object> DeserializeVariables(
-        JObject input)
+            JObject input)
         {
             if (input == null)
             {
                 return null;
             }
 
-            return DeserializeVariables(input.ToObject<Dictionary<string, JToken>>());
+            return DeserializeVariables(
+                input.ToObject<Dictionary<string, JToken>>());
         }
 
         private static Dictionary<string, object> DeserializeVariables(
@@ -29,32 +30,34 @@ namespace HotChocolate.AspNetCore
             }
 
             var values = new Dictionary<string, object>();
+
             foreach (string key in input.Keys.ToArray())
             {
                 values[key] = DeserializeVariableValue(input[key]);
             }
+
             return values;
         }
 
-        private static ObjectValueNode DeserializeObjectValue(
-           Dictionary<string, JToken> input)
+        private static Dictionary<string, object> DeserializeObjectValue(
+            Dictionary<string, JToken> input)
         {
             if (input == null)
             {
                 return null;
             }
 
-            var fields = new List<ObjectFieldNode>();
+            var fields = new Dictionary<string, object>();
+
             foreach (string key in input.Keys.ToArray())
             {
-                fields.Add(new ObjectFieldNode(null,
-                    new NameNode(null, key),
-                    DeserializeVariableValue(input[key])));
+                fields[key] = DeserializeVariableValue(input[key]);
             }
-            return new ObjectValueNode(null, fields);
+
+            return fields;
         }
 
-        private static IValueNode DeserializeVariableValue(object value)
+        private static object DeserializeVariableValue(object value)
         {
             if (value is JObject jo)
             {
@@ -75,32 +78,35 @@ namespace HotChocolate.AspNetCore
             throw new NotSupportedException();
         }
 
-        private static IValueNode DeserializeVariableListValue(JArray array)
+        private static List<object> DeserializeVariableListValue(JArray array)
         {
-            var list = new List<IValueNode>();
+            var list = new List<object>();
+
             foreach (JToken token in array.Children())
             {
                 list.Add(DeserializeVariableValue(token));
             }
-            return new ListValueNode(null, list);
+
+            return list;
         }
 
-        private static IValueNode DeserializeVariableScalarValue(JValue value)
+        private static object DeserializeVariableScalarValue(JValue value)
         {
             switch (value.Type)
             {
                 case JTokenType.Boolean:
-                    return new BooleanValueNode(value.Value<bool>());
+                    return value.Value<bool>();
                 case JTokenType.Integer:
-                    return new IntValueNode(value.Value<string>());
+                    return value.Value<int>();
                 case JTokenType.Float:
-                    return new FloatValueNode(value.Value<string>());
+                    return value.Value<double>();
                 default:
-                    return new StringValueNode(value.Value<string>());
+                    return value.Value<string>();
             }
         }
 
-        public static IServiceProvider CreateRequestServices(HttpContext context)
+        public static IServiceProvider CreateRequestServices(
+            HttpContext context)
         {
             Dictionary<Type, object> services = new Dictionary<Type, object>
             {

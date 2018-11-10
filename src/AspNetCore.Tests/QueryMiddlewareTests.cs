@@ -26,7 +26,7 @@ namespace HotChocolate.AspNetCore
         {
             // arrange
             TestServer server = CreateTestServer("/foo");
-            var request = new QueryRequestDto { Query = "{ basic { a } }" };
+            var request = new ClientQueryRequest { Query = "{ basic { a } }" };
 
             // act
             HttpResponseMessage message =
@@ -36,7 +36,7 @@ namespace HotChocolate.AspNetCore
             Assert.Equal(HttpStatusCode.OK, message.StatusCode);
 
             string json = await message.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<QueryResultDto>(json);
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
             Assert.Null(result.Errors);
             result.Snapshot();
         }
@@ -46,7 +46,7 @@ namespace HotChocolate.AspNetCore
         {
             // arrange
             TestServer server = CreateTestServer();
-            var request = new QueryRequestDto { Query = "{ A:basic { B:a } }" };
+            var request = new ClientQueryRequest { Query = "{ A:basic { B:a } }" };
 
             // act
             HttpResponseMessage message =
@@ -56,7 +56,7 @@ namespace HotChocolate.AspNetCore
             Assert.Equal(HttpStatusCode.OK, message.StatusCode);
 
             string json = await message.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<QueryResultDto>(json);
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
             Assert.Null(result.Errors);
             result.Snapshot();
         }
@@ -66,7 +66,7 @@ namespace HotChocolate.AspNetCore
         {
             // arrange
             TestServer server = CreateTestServer();
-            var request = new QueryRequestDto
+            var request = new ClientQueryRequest
             {
                 Query = "query a($a: TestEnum) { withEnum(test: $a) }",
                 Variables = JObject.FromObject(new Dictionary<string, object>
@@ -83,7 +83,7 @@ namespace HotChocolate.AspNetCore
             Assert.Equal(HttpStatusCode.OK, message.StatusCode);
 
             string json = await message.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<QueryResultDto>(json);
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
             Assert.Null(result.Errors);
             result.Snapshot();
         }
@@ -93,7 +93,7 @@ namespace HotChocolate.AspNetCore
         {
             // arrange
             TestServer server = CreateTestServer();
-            var request = new QueryRequestDto
+            var request = new ClientQueryRequest
             {
                 Query = "query a($a: BarInput) { withNestedEnum(bar: $a) }",
                 Variables = JObject.FromObject(new Dictionary<string, object>
@@ -114,7 +114,7 @@ namespace HotChocolate.AspNetCore
             Assert.Equal(HttpStatusCode.OK, message.StatusCode);
 
             string json = await message.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<QueryResultDto>(json);
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
             Assert.Null(result.Errors);
             result.Snapshot();
         }
@@ -134,7 +134,7 @@ namespace HotChocolate.AspNetCore
             Assert.Equal(HttpStatusCode.OK, message.StatusCode);
 
             string json = await message.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<QueryResultDto>(json);
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
             Assert.Null(result.Errors);
             result.Snapshot();
         }
@@ -158,7 +158,7 @@ namespace HotChocolate.AspNetCore
         {
             // arrange
             TestServer server = CreateTestServer();
-            var request = new QueryRequestDto
+            var request = new ClientQueryRequest
             {
                 Query = @"
                 query test($a: String!) {
@@ -182,7 +182,7 @@ namespace HotChocolate.AspNetCore
             Assert.Equal(HttpStatusCode.OK, message.StatusCode);
 
             string json = await message.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<QueryResultDto>(json);
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
             Assert.Null(result.Errors);
             result.Snapshot();
         }
@@ -192,7 +192,7 @@ namespace HotChocolate.AspNetCore
         {
             // arrange
             TestServer server = CreateTestServer();
-            var request = new QueryRequestDto
+            var request = new ClientQueryRequest
             {
                 Query = @"
                 query test($a: FooInput!) {
@@ -220,7 +220,7 @@ namespace HotChocolate.AspNetCore
             Assert.Equal(HttpStatusCode.OK, message.StatusCode);
 
             string json = await message.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<QueryResultDto>(json);
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
             Assert.Null(result.Errors);
             result.Snapshot();
         }
@@ -230,7 +230,7 @@ namespace HotChocolate.AspNetCore
         {
             // arrange
             TestServer server = CreateTestServer();
-            var request = new QueryRequestDto
+            var request = new ClientQueryRequest
             {
                 Query = @"
                 {
@@ -246,7 +246,7 @@ namespace HotChocolate.AspNetCore
             Assert.Equal(HttpStatusCode.OK, message.StatusCode);
 
             string json = await message.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<QueryResultDto>(json);
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
             Assert.Null(result.Errors);
             result.Snapshot();
         }
@@ -256,7 +256,7 @@ namespace HotChocolate.AspNetCore
         {
             // arrange
             TestServer server = CreateTestServer();
-            var request = new QueryRequestDto
+            var request = new ClientQueryRequest
             {
                 Query = @"
                 {
@@ -274,19 +274,54 @@ namespace HotChocolate.AspNetCore
             Assert.Equal(HttpStatusCode.OK, message.StatusCode);
 
             string json = await message.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<QueryResultDto>(json);
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
             Assert.Null(result.Errors);
             result.Snapshot();
         }
 
-        private TestServer CreateTestServer(string route = null)
+        [Fact]
+        public async Task HttpPost_CustomProperties()
+        {
+            // arrange
+            TestServer server = CreateTestServer();
+            var request = new ClientQueryRequest
+            {
+                Query = @"
+                {
+                    customProperty
+                }"
+            };
+
+            // act
+            HttpResponseMessage message =
+                await server.SendRequestAsync(request);
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, message.StatusCode);
+
+            string json = await message.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
+            Assert.Null(result.Errors);
+            result.Snapshot();
+        }
+
+        private TestServer CreateTestServer(string path = null)
         {
             return TestServerFactory.Create(
                 c =>
                 {
                     c.RegisterQueryType<QueryType>();
                     c.RegisterType<InputObjectType<Bar>>();
-                }, route);
+                },
+                new GraphQLMiddlewareOptions
+                {
+                    Path = path ?? "/",
+                    OnCreateRequest = (context, request, properties) =>
+                    {
+                        properties["foo"] = "bar";
+                        return Task.CompletedTask;
+                    }
+                });
         }
     }
 }

@@ -20,6 +20,8 @@ namespace HotChocolate.AspNetCore
             descriptor.Field(t => t.GetWithEnum(default))
                 .Type<NonNullType<BooleanType>>()
                 .Argument("test", a => a.Type<EnumType<TestEnum>>());
+            descriptor.Field("customProperty")
+                .Resolver(ctx => ctx.CustomProperty<string>("foo"));
         }
     }
 }

@@ -20,6 +20,29 @@ namespace HotChocolate
         }
 
         public static void UseGraphiQL(
+           this IApplicationBuilder applicationBuilder,
+           PathString queryPath)
+        {
+            UseGraphiQL(applicationBuilder, new GraphiQLOptions
+            {
+                QueryPath = queryPath,
+                Path = queryPath + "/ui"
+            });
+        }
+
+         public static void UseGraphiQL(
+            this IApplicationBuilder applicationBuilder,
+            PathString queryPath,
+            PathString uiPath)
+        {
+            UseGraphiQL(applicationBuilder, new GraphiQLOptions
+            {
+                QueryPath = queryPath,
+                Path = uiPath
+            });
+        }
+
+        public static void UseGraphiQL(
             this IApplicationBuilder applicationBuilder,
             GraphiQLOptions options)
         {
@@ -29,24 +52,24 @@ namespace HotChocolate
             }
 
             applicationBuilder.UseGraphiQLSettingsMiddleware(options);
-            applicationBuilder.UseGraphiQLFileServer(options.Route);
+            applicationBuilder.UseGraphiQLFileServer(options.Path);
         }
 
         private static void UseGraphiQLSettingsMiddleware(
            this IApplicationBuilder applicationBuilder,
            GraphiQLOptions options)
         {
-            applicationBuilder.Map(options.Route.Add("/settings.js"),
+            applicationBuilder.Map(options.Path.Add("/settings.js"),
                 app => app.UseMiddleware<SettingsMiddleware>(options));
         }
 
         private static void UseGraphiQLFileServer(
             this IApplicationBuilder applicationBuilder,
-            string route)
+            string path)
         {
             var fileServerOptions = new FileServerOptions
             {
-                RequestPath = route,
+                RequestPath = path,
                 FileProvider = CreateFileProvider(),
                 EnableDefaultFiles = true,
                 StaticFileOptions =

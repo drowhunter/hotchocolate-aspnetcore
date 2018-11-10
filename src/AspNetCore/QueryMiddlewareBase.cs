@@ -12,23 +12,29 @@ namespace HotChocolate.AspNetCore
     public abstract class QueryMiddlewareBase
     {
         private readonly RequestDelegate _next;
-        private readonly QueryExecuter _queryExecuter;
 
         public QueryMiddlewareBase(
             RequestDelegate next,
-            QueryExecuter queryExecuter)
+            QueryExecuter queryExecuter,
+            GraphQLMiddlewareOptions options)
         {
             _next = next
                 ?? throw new ArgumentNullException(nameof(next));
-            _queryExecuter = queryExecuter
+            Executer = queryExecuter
                 ?? throw new ArgumentNullException(nameof(queryExecuter));
+            Options = options
+                ?? throw new ArgumentNullException(nameof(options));
         }
+
+        protected QueryExecuter Executer { get; }
+
+        protected GraphQLMiddlewareOptions Options { get; }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (CanHandleRequest(context))
+            if (context.IsValidPath(Options.Path) && CanHandleRequest(context))
             {
-                await HandleRequestAsync(context, _queryExecuter)
+                await HandleRequestAsync(context, Executer)
                     .ConfigureAwait(false);
             }
             else
@@ -39,18 +45,41 @@ namespace HotChocolate.AspNetCore
 
         protected abstract bool CanHandleRequest(HttpContext context);
 
-        protected abstract Task<Execution.QueryRequest> CreateQueryRequest(
+        protected T GetService<T>(HttpContext context) =>
+            (T)context.RequestServices.GetService(typeof(T));
+
+        private async Task<QueryRequest> CreateQueryRequestInternal(
+            HttpContext context)
+        {
+            QueryRequest request = await CreateQueryRequest(context)
+                .ConfigureAwait(false); ;
+
+            var requestProperties = new Dictionary<string, object>();
+            requestProperties[nameof(ClaimsPrincipal)] = context.User;
+            request.Properties = requestProperties;
+
+            var onCreateRequest = Options.OnCreateRequest
+                ?? GetService<OnCreateRequestAsync>(context);
+
+            if (onCreateRequest != null)
+            {
+                await onCreateRequest(context, request, requestProperties)
+                    .ConfigureAwait(false);
+            }
+
+            return request;
+        }
+
+        protected abstract Task<QueryRequest> CreateQueryRequest(
             HttpContext context);
 
         private async Task HandleRequestAsync(
             HttpContext context,
             QueryExecuter queryExecuter)
         {
-            Execution.QueryRequest request = await CreateQueryRequest(context);
-            request.Properties = new Dictionary<string, object>
-            {
-                { typeof(ClaimsPrincipal).FullName, context.User }
-            };
+            QueryRequest request =
+                await CreateQueryRequestInternal(context)
+                    .ConfigureAwait(false);
 
             IExecutionResult result = await queryExecuter
                 .ExecuteAsync(request, context.RequestAborted)
@@ -68,7 +97,8 @@ namespace HotChocolate.AspNetCore
             {
                 string json = queryResult.ToJson();
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
-                await response.Body.WriteAsync(buffer, 0, buffer.Length);
+                await response.Body.WriteAsync(buffer, 0, buffer.Length)
+                    .ConfigureAwait(false); ;
             }
         }
     }

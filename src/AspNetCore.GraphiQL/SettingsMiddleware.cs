@@ -20,9 +20,9 @@ namespace HotChocolate.AspNetCore
             _options = options
                 ?? throw new ArgumentNullException(nameof(options));
 
-            var uiPath = UriFromPath(options.Route);
-            var queryPath = UriFromPath(options.QueryRoute);
-            var subscriptionPath = UriFromPath(options.SubscriptionRoute);
+            var uiPath = UriFromPath(options.Path);
+            var queryPath = UriFromPath(options.QueryPath);
+            var subscriptionPath = UriFromPath(options.SubscriptionPath);
 
             _queryPath = uiPath.MakeRelativeUri(queryPath).ToString();
             _subscriptionPath = uiPath.MakeRelativeUri(subscriptionPath)

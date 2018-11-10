@@ -1,13 +1,24 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace HotChocolate
+namespace HotChocolate.AspNetCore
 {
-    public class GraphiQLOptions
+    public delegate Task OnCreateRequestAsync(
+        HttpContext context,
+        Execution.QueryRequest request,
+        IDictionary<string, object> properties);
+
+    public delegate Task OnConnectWebSocketAsync(
+        IDictionary<string, object> properties);
+
+    public class GraphQLMiddlewareOptions
     {
-        private PathString _path = "/ui";
-        private PathString _queryPath = "/";
-        private PathString _subscriptionPath = "/ws";
+        private PathString _path = "/";
+        private PathString _subscriptionPath;
+
+        public int QueryCacheSize { get; set; } = 100;
 
         public PathString Path
         {
@@ -21,22 +32,7 @@ namespace HotChocolate
                 }
 
                 _path = value;
-            }
-        }
-
-        public PathString QueryPath
-        {
-            get => _queryPath;
-            set
-            {
-                if (!value.HasValue)
-                {
-                    throw new ArgumentException(
-                        "The query-path cannot be empty.");
-                }
-
-                _queryPath = value;
-                _subscriptionPath = value + "/ws";
+                SubscriptionPath = value + "/ws";
             }
         }
 
@@ -54,5 +50,9 @@ namespace HotChocolate
                 _subscriptionPath = value;
             }
         }
+
+        public OnConnectWebSocketAsync OnConnect { get; set; }
+
+        public OnCreateRequestAsync OnCreateRequest { get; set; }
     }
 }

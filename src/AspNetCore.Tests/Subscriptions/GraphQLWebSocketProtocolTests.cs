@@ -58,7 +58,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
             string id = await webSocket.SendSubscriptionStartAsync(query);
 
             // assert
-            await testServer.SendRequestAsync(new QueryRequestDto
+            await testServer.SendRequestAsync(new ClientQueryRequest
             {
                 Query = "mutation { sendFoo }"
             });
@@ -109,7 +109,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
                     s.AddSingleton<IEventRegistry>(eventRegistry);
                     s.AddSingleton<IEventSender>(eventRegistry);
                 },
-                null);
+                new GraphQLMiddlewareOptions());
         }
 
         private async Task ConnectAsync(WebSocket webSocket)

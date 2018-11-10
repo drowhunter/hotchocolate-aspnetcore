@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using HotChocolate.Subscriptions;
 using StarWars.Data;
 using StarWars.Models;
 
@@ -15,9 +16,9 @@ namespace StarWars
                 ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public IEnumerable<Review> OnReview(Episode episode)
+        public Review OnReview(Episode episode, IEventMessage message)
         {
-            return _repository.GetReviews(episode);
+            return (Review)message.Payload;
         }
     }
 }

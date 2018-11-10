@@ -11,24 +11,31 @@ namespace HotChocolate.AspNetCore
     public class SubscriptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly QueryExecuter _queryExecuter;
 
         public SubscriptionMiddleware(
             RequestDelegate next,
-            QueryExecuter queryExecuter)
+            QueryExecuter queryExecuter,
+            GraphQLMiddlewareOptions options)
         {
             _next = next
                 ?? throw new ArgumentNullException(nameof(next));
-            _queryExecuter = queryExecuter
+            Executer = queryExecuter
                 ?? throw new ArgumentNullException(nameof(queryExecuter));
+            Options = options
+                ?? throw new ArgumentNullException(nameof(options));
         }
+
+        protected QueryExecuter Executer { get; }
+
+        protected GraphQLMiddlewareOptions Options { get; }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (context.WebSockets.IsWebSocketRequest)
+            if (context.WebSockets.IsWebSocketRequest
+                && context.IsValidPath(Options.SubscriptionPath))
             {
                 var session = await WebSocketSession
-                    .TryCreateAsync(context, _queryExecuter)
+                    .TryCreateAsync(context, Executer)
                     .ConfigureAwait(false); ;
 
                 if (session != null)
