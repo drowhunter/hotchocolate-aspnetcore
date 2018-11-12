@@ -42,7 +42,7 @@ namespace HotChocolate.AspNetCore
                 new Execution.QueryRequest(request.Query, request.OperationName)
                 {
                     VariableValues = QueryMiddlewareUtilities
-                        .DeserializeVariables(request.Variables),
+                        .ToDictionary(request.Variables),
                     Services = QueryMiddlewareUtilities
                         .CreateRequestServices(context)
                 });

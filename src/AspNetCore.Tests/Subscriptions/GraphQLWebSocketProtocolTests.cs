@@ -25,7 +25,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
         private TestServerFactory TestServerFactory { get; }
 
         [Fact]
-        public async Task Send_Connect_AcceptAndKeepAllive()
+        public async Task Send_Connect_AcceptAndKeepAlive()
         {
             // arrange
             TestServer testServer = CreateTestServer();
@@ -37,8 +37,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
             await ConnectAsync(webSocket);
         }
 
-        // TODO : Fix this test
-        [Fact(Skip = "FIX: There are issues with this test on the circleci build.")]
+        [Fact]
         public async Task Send_Start_ReceiveDataOnMutation()
         {
             // arrange

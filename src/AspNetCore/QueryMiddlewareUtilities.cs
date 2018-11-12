@@ -9,19 +9,19 @@ namespace HotChocolate.AspNetCore
 {
     internal static class QueryMiddlewareUtilities
     {
-        public static Dictionary<string, object> DeserializeVariables(
-            JObject input)
+        public static Dictionary<string, object> ToDictionary(
+            this JObject input)
         {
             if (input == null)
             {
                 return null;
             }
 
-            return DeserializeVariables(
+            return ToDictionary(
                 input.ToObject<Dictionary<string, JToken>>());
         }
 
-        private static Dictionary<string, object> DeserializeVariables(
+        private static Dictionary<string, object> ToDictionary(
             Dictionary<string, JToken> input)
         {
             if (input == null)
@@ -33,13 +33,13 @@ namespace HotChocolate.AspNetCore
 
             foreach (string key in input.Keys.ToArray())
             {
-                values[key] = DeserializeVariableValue(input[key]);
+                values[key] = DeserializeValue(input[key]);
             }
 
             return values;
         }
 
-        private static Dictionary<string, object> DeserializeObjectValue(
+        private static Dictionary<string, object> DeserializeObject(
             Dictionary<string, JToken> input)
         {
             if (input == null)
@@ -51,46 +51,46 @@ namespace HotChocolate.AspNetCore
 
             foreach (string key in input.Keys.ToArray())
             {
-                fields[key] = DeserializeVariableValue(input[key]);
+                fields[key] = DeserializeValue(input[key]);
             }
 
             return fields;
         }
 
-        private static object DeserializeVariableValue(object value)
+        private static object DeserializeValue(object value)
         {
             if (value is JObject jo)
             {
-                return DeserializeObjectValue(
+                return DeserializeObject(
                     jo.ToObject<Dictionary<string, JToken>>());
             }
 
             if (value is JArray ja)
             {
-                return DeserializeVariableListValue(ja);
+                return DeserializeList(ja);
             }
 
             if (value is JValue jv)
             {
-                return DeserializeVariableScalarValue(jv);
+                return DeserializeScalar(jv);
             }
 
             throw new NotSupportedException();
         }
 
-        private static List<object> DeserializeVariableListValue(JArray array)
+        private static List<object> DeserializeList(JArray array)
         {
             var list = new List<object>();
 
             foreach (JToken token in array.Children())
             {
-                list.Add(DeserializeVariableValue(token));
+                list.Add(DeserializeValue(token));
             }
 
             return list;
         }
 
-        private static object DeserializeVariableScalarValue(JValue value)
+        private static object DeserializeScalar(JValue value)
         {
             switch (value.Type)
             {

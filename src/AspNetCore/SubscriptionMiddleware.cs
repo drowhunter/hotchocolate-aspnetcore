@@ -34,8 +34,13 @@ namespace HotChocolate.AspNetCore
             if (context.WebSockets.IsWebSocketRequest
                 && context.IsValidPath(Options.SubscriptionPath))
             {
+                var onConnect = Options.OnConnectWebSocket
+                    ?? GetService<OnConnectWebSocketAsync>(context);
+                var onRequest = Options.OnCreateRequest
+                    ?? GetService<OnCreateRequestAsync>(context);
+
                 var session = await WebSocketSession
-                    .TryCreateAsync(context, Executer)
+                    .TryCreateAsync(context, Executer, onConnect, onRequest)
                     .ConfigureAwait(false); ;
 
                 if (session != null)
@@ -49,5 +54,8 @@ namespace HotChocolate.AspNetCore
                 await _next(context).ConfigureAwait(false);
             }
         }
+
+        protected T GetService<T>(HttpContext context) =>
+            (T)context.RequestServices.GetService(typeof(T));
     }
 }

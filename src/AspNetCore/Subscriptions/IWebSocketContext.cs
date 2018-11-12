@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Threading;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public interface IWebSocketContext
+    internal interface IWebSocketContext
         : IDisposable
     {
         HttpContext HttpContext { get; }
@@ -17,9 +18,13 @@ namespace HotChocolate.AspNetCore.Subscriptions
 
         WebSocketCloseStatus? CloseStatus { get; }
 
+        IDictionary<string, object> RequestProperties { get; }
+
         void RegisterSubscription(ISubscription subscription);
 
         void UnregisterSubscription(string subscriptionId);
+
+        Task PrepareRequestAsync(QueryRequest request);
 
         Task SendMessageAsync(
             Stream messageStream,
@@ -28,5 +33,10 @@ namespace HotChocolate.AspNetCore.Subscriptions
         Task ReceiveMessageAsync(
             Stream messageStream,
             CancellationToken cancellationToken);
+
+        Task<ConnectionStatus> OpenAsync(
+            IDictionary<string, object> properties);
+
+        Task CloseAsync();
     }
 }

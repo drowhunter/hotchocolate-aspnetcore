@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
@@ -8,17 +9,18 @@ namespace HotChocolate.AspNetCore
     public delegate Task OnCreateRequestAsync(
         HttpContext context,
         Execution.QueryRequest request,
-        IDictionary<string, object> properties);
+        IDictionary<string, object> properties,
+        CancellationToken cancellationToken);
 
-    public delegate Task OnConnectWebSocketAsync(
-        IDictionary<string, object> properties);
+    public delegate Task<ConnectionStatus> OnConnectWebSocketAsync(
+        HttpContext context,
+        IDictionary<string, object> properties,
+        CancellationToken cancellationToken);
 
     public class GraphQLMiddlewareOptions
     {
         private PathString _path = "/";
         private PathString _subscriptionPath;
-
-        public int QueryCacheSize { get; set; } = 100;
 
         public PathString Path
         {
@@ -51,7 +53,7 @@ namespace HotChocolate.AspNetCore
             }
         }
 
-        public OnConnectWebSocketAsync OnConnect { get; set; }
+        public OnConnectWebSocketAsync OnConnectWebSocket { get; set; }
 
         public OnCreateRequestAsync OnCreateRequest { get; set; }
     }

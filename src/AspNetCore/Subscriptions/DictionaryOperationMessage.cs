@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    internal class DataOperationMessage
+    internal class DictionaryOperationMessage
         : OperationMessage
     {
         public IReadOnlyDictionary<string, object> Payload { get; set; }

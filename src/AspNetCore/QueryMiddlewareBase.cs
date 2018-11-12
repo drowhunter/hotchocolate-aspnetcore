@@ -34,8 +34,15 @@ namespace HotChocolate.AspNetCore
         {
             if (context.IsValidPath(Options.Path) && CanHandleRequest(context))
             {
-                await HandleRequestAsync(context, Executer)
-                    .ConfigureAwait(false);
+                try
+                {
+                    await HandleRequestAsync(context, Executer)
+                        .ConfigureAwait(false);
+                }
+                catch (NotSupportedException)
+                {
+                    context.Response.StatusCode = 400;
+                }
             }
             else
             {
@@ -63,7 +70,8 @@ namespace HotChocolate.AspNetCore
 
             if (onCreateRequest != null)
             {
-                await onCreateRequest(context, request, requestProperties)
+                await onCreateRequest(context, request,
+                    requestProperties, context.RequestAborted)
                     .ConfigureAwait(false);
             }
 

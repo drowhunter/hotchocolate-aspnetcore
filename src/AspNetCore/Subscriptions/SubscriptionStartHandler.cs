@@ -4,7 +4,7 @@ using HotChocolate.Execution;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public sealed class SubscriptionStartHandler
+    internal sealed class SubscriptionStartHandler
         : IRequestHandler
     {
         public bool CanHandle(GenericOperationMessage message)
@@ -17,17 +17,23 @@ namespace HotChocolate.AspNetCore.Subscriptions
             GenericOperationMessage message,
             CancellationToken cancellationToken)
         {
-            QueryRequestDto request = message.Payload.ToObject<QueryRequestDto>();
+            var payload = message.Payload.ToObject<QueryRequestDto>();
 
-            IExecutionResult result = await context.QueryExecuter.ExecuteAsync(
-                new Execution.QueryRequest(request.Query, request.OperationName)
-                {
-                    VariableValues = QueryMiddlewareUtilities
-                        .DeserializeVariables(request.Variables),
-                    Services = QueryMiddlewareUtilities
-                        .CreateRequestServices(context.HttpContext)
-                },
-                cancellationToken).ConfigureAwait(false);
+            var request = new QueryRequest(payload.Query, payload.OperationName)
+            {
+                VariableValues = QueryMiddlewareUtilities
+                    .ToDictionary(payload.Variables),
+                Services = QueryMiddlewareUtilities
+                    .CreateRequestServices(context.HttpContext)
+            };
+
+            await context.PrepareRequestAsync(request)
+                .ConfigureAwait(false);
+
+            IExecutionResult result =
+                await context.QueryExecuter.ExecuteAsync(
+                    request, cancellationToken)
+                    .ConfigureAwait(false);
 
             if (result is IResponseStream responseStream)
             {
@@ -37,9 +43,11 @@ namespace HotChocolate.AspNetCore.Subscriptions
             else if (result is IQueryExecutionResult queryResult)
             {
                 await context.SendSubscriptionDataMessageAsync(
-                    message.Id, queryResult, cancellationToken);
+                    message.Id, queryResult, cancellationToken)
+                    .ConfigureAwait(false);
                 await context.SendSubscriptionCompleteMessageAsync(
-                    message.Id, cancellationToken);
+                    message.Id, cancellationToken)
+                    .ConfigureAwait(false);
             }
         }
     }

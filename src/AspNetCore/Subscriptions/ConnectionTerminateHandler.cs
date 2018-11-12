@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public sealed class ConnectionTerminateHandler
+    internal sealed class ConnectionTerminateHandler
         : IRequestHandler
     {
         public bool CanHandle(GenericOperationMessage message)
@@ -11,16 +11,12 @@ namespace HotChocolate.AspNetCore.Subscriptions
             return message.Type == MessageTypes.Connection.Terminate;
         }
 
-        public Task HandleAsync(
+        public async Task HandleAsync(
             IWebSocketContext context,
             GenericOperationMessage message,
             CancellationToken cancellationToken)
         {
-            context.Dispose();
-            return Task.CompletedTask;
+            await context.CloseAsync();
         }
     }
-
-
-
 }

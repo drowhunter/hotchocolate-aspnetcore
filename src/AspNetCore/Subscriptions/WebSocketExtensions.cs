@@ -12,7 +12,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public static class WebSocketExtensions
+    internal static class WebSocketExtensions
     {
         private const int _maxMessageSize = 1024 * 4;
 
@@ -45,6 +45,21 @@ namespace HotChocolate.AspNetCore.Subscriptions
                 new GenericOperationMessage
                 {
                     Type = MessageTypes.Connection.KeepAlive
+                },
+                cancellationToken);
+        }
+
+        public static Task SendConnectionErrorMessageAsync(
+            this IWebSocketContext context,
+            IReadOnlyDictionary<string, object> payload,
+            CancellationToken cancellationToken)
+        {
+            return SendMessageAsync(
+                context,
+                new DictionaryOperationMessage
+                {
+                    Type = MessageTypes.Connection.Error,
+                    Payload = payload
                 },
                 cancellationToken);
         }

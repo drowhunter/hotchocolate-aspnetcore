@@ -20,10 +20,19 @@ namespace HotChocolate.AspNetCore
         public static Task<HttpResponseMessage> SendPostRequestAsync(
             this TestServer testServer, string requestBody, string path = null)
         {
+            return SendPostRequestAsync(
+                testServer, requestBody,
+                "application/json", path);
+        }
+
+        public static Task<HttpResponseMessage> SendPostRequestAsync(
+            this TestServer testServer, string requestBody,
+            string contentType, string path)
+        {
             return testServer.CreateClient()
                 .PostAsync(CreateUrl(path),
                     new StringContent(requestBody,
-                    Encoding.UTF8, "application/json"));
+                    Encoding.UTF8, contentType));
         }
 
         public static Task<HttpResponseMessage> SendGetRequestAsync(

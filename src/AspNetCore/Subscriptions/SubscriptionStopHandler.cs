@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public sealed class SubscriptionStopHandler
+    internal sealed class SubscriptionStopHandler
         : IRequestHandler
     {
         public bool CanHandle(GenericOperationMessage message)

@@ -39,7 +39,7 @@ namespace HotChocolate.AspNetCore
                 request.Query, request.OperationName)
             {
                 VariableValues = QueryMiddlewareUtilities
-                    .DeserializeVariables(request.Variables),
+                    .ToDictionary(request.Variables),
                 Services = QueryMiddlewareUtilities
                     .CreateRequestServices(context)
             };
@@ -51,10 +51,21 @@ namespace HotChocolate.AspNetCore
             using (StreamReader reader = new StreamReader(
                 context.Request.Body, Encoding.UTF8))
             {
-                string json = await reader.ReadToEndAsync()
+                string content = await reader.ReadToEndAsync()
                     .ConfigureAwait(false);
 
-                return JsonConvert.DeserializeObject<QueryRequestDto>(json);
+                switch (context.Request.ContentType.Split(';')[0])
+                {
+                    case ContentType.Json:
+                        return JsonConvert
+                            .DeserializeObject<QueryRequestDto>(content);
+
+                    case ContentType.GraphQL:
+                        return new QueryRequestDto { Query = content };
+
+                    default:
+                        throw new NotSupportedException();
+                }
             }
         }
     }

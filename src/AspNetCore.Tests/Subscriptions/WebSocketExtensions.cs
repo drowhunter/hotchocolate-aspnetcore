@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
@@ -12,7 +11,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public static class WebSocketExtensions
+    internal static class WebSocketExtensions
     {
         private const int _maxMessageSize = 1024 * 4;
 
@@ -106,19 +105,4 @@ namespace HotChocolate.AspNetCore.Subscriptions
             }
         }
     }
-
-
-    public class StartOperationMessage
-        : OperationMessage
-    {
-        public SubscriptionQuery Payload { get; set; }
-    }
-
-    public class SubscriptionQuery
-    {
-        public string OperationName { get; set; }
-        public string Query { get; set; }
-        public Dictionary<string, object> Variables { get; set; }
-    }
-
 }

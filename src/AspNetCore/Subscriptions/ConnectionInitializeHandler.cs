@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,7 +11,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
     /// GQL_CONNECTION_INIT from client, indicates the
     /// server accepted the connection.
     /// </summary>
-    public sealed class ConnectionInitializeHandler
+    internal sealed class ConnectionInitializeHandler
         : IRequestHandler
     {
         public bool CanHandle(GenericOperationMessage message)
@@ -21,11 +24,24 @@ namespace HotChocolate.AspNetCore.Subscriptions
             GenericOperationMessage message,
             CancellationToken cancellationToken)
         {
-            await context.SendConnectionAcceptMessageAsync(
-                cancellationToken);
+            ConnectionStatus connectionStatus =
+                await context.OpenAsync(message.Payload.ToDictionary());
 
-            await context.SendConnectionKeepAliveMessageAsync(
-                cancellationToken);
+            if (connectionStatus.Accepted)
+            {
+                await context.SendConnectionAcceptMessageAsync(
+                    cancellationToken);
+
+                await context.SendConnectionKeepAliveMessageAsync(
+                    cancellationToken);
+            }
+            else
+            {
+                await context.SendConnectionErrorMessageAsync(
+                    connectionStatus.Response, cancellationToken);
+
+                await context.CloseAsync();
+            }
         }
     }
 }

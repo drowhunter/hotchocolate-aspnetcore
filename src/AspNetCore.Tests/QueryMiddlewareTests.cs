@@ -305,6 +305,49 @@ namespace HotChocolate.AspNetCore
             result.Snapshot();
         }
 
+        [Fact]
+        public async Task HttpPost_GraphQLRequest()
+        {
+            // arrange
+            TestServer server = CreateTestServer();
+            var request = @"
+                {
+                    customProperty
+                }";
+            var contentType = "application/graphql";
+
+            // act
+            HttpResponseMessage message =
+                await server.SendPostRequestAsync(request, contentType, null);
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, message.StatusCode);
+
+            string json = await message.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<ClientQueryResult>(json);
+            Assert.Null(result.Errors);
+            result.Snapshot();
+        }
+
+        [Fact]
+        public async Task HttpPost_UnknownContentType()
+        {
+            // arrange
+            TestServer server = CreateTestServer();
+            var request = @"
+                {
+                    customProperty
+                }";
+            var contentType = "application/foo";
+
+            // act
+            HttpResponseMessage message =
+                await server.SendPostRequestAsync(request, contentType, null);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, message.StatusCode);
+        }
+
         private TestServer CreateTestServer(string path = null)
         {
             return TestServerFactory.Create(
@@ -316,7 +359,7 @@ namespace HotChocolate.AspNetCore
                 new GraphQLMiddlewareOptions
                 {
                     Path = path ?? "/",
-                    OnCreateRequest = (context, request, properties) =>
+                    OnCreateRequest = (context, request, properties, ct) =>
                     {
                         properties["foo"] = "bar";
                         return Task.CompletedTask;

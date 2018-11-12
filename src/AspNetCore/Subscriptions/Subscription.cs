@@ -5,7 +5,7 @@ using HotChocolate.Execution;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public class Subscription
+    internal class Subscription
         : ISubscription
     {
         private readonly CancellationTokenSource _cts =

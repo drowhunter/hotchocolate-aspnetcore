@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public class InMemoryWebSocketContext
+    internal class InMemoryWebSocketContext
         : IWebSocketContext
     {
         public Dictionary<string, ISubscription> Subscriptions { get; } =
@@ -31,6 +31,11 @@ namespace HotChocolate.AspNetCore.Subscriptions
         public WebSocketCloseStatus? CloseStatus { get; set; }
 
         public bool IsDisposed { get; private set; }
+        public IDictionary<string, object> RequestProperties
+        {
+            get;
+            private set;
+        }
 
         public void RegisterSubscription(ISubscription subscription)
         {
@@ -47,6 +52,12 @@ namespace HotChocolate.AspNetCore.Subscriptions
             }
         }
 
+        public Task PrepareRequestAsync(QueryRequest request)
+        {
+            request.Properties = new Dictionary<string, object>(
+                RequestProperties);
+            return Task.CompletedTask;
+        }
 
         public async Task ReceiveMessageAsync(
             Stream messageStream,
@@ -81,7 +92,17 @@ namespace HotChocolate.AspNetCore.Subscriptions
             return Task.CompletedTask;
         }
 
+        public Task<ConnectionStatus> OpenAsync(IDictionary<string, object> properties)
+        {
+            RequestProperties = properties;
+            return Task.FromResult(ConnectionStatus.Accept());
+        }
 
+        public Task CloseAsync()
+        {
+            Dispose();
+            return Task.CompletedTask;
+        }
         public void Dispose()
         {
             IsDisposed = true;

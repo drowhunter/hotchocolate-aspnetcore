@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Execution;
@@ -9,18 +11,22 @@ using Microsoft.AspNetCore.Http;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public class WebSocketContext
+    internal class WebSocketContext
         : IWebSocketContext
     {
         private const int _maxMessageSize = 1024 * 4;
         private readonly ConcurrentDictionary<string, ISubscription> _subscriptions =
             new ConcurrentDictionary<string, ISubscription>();
+        private readonly OnConnectWebSocketAsync _onConnectAsync;
+        private readonly OnCreateRequestAsync _onCreateRequest;
         private bool _disposed;
 
         public WebSocketContext(
             HttpContext httpContext,
             WebSocket webSocket,
-            QueryExecuter queryExecuter)
+            QueryExecuter queryExecuter,
+            OnConnectWebSocketAsync onConnectAsync,
+            OnCreateRequestAsync onCreateRequest)
         {
             HttpContext = httpContext
                 ?? throw new ArgumentNullException(nameof(httpContext));
@@ -28,6 +34,9 @@ namespace HotChocolate.AspNetCore.Subscriptions
                 ?? throw new ArgumentNullException(nameof(webSocket));
             QueryExecuter = queryExecuter
                 ?? throw new ArgumentNullException(nameof(queryExecuter));
+
+            _onConnectAsync = onConnectAsync;
+            _onCreateRequest = onCreateRequest;
         }
 
         public HttpContext HttpContext { get; }
@@ -37,6 +46,8 @@ namespace HotChocolate.AspNetCore.Subscriptions
         public WebSocket WebSocket { get; }
 
         public WebSocketCloseStatus? CloseStatus => WebSocket.CloseStatus;
+
+        public IDictionary<string, object> RequestProperties { get; private set; }
 
         public void RegisterSubscription(ISubscription subscription)
         {
@@ -77,6 +88,19 @@ namespace HotChocolate.AspNetCore.Subscriptions
             }
         }
 
+        public async Task PrepareRequestAsync(QueryRequest request)
+        {
+            var properties = new Dictionary<string, object>(RequestProperties);
+            request.Properties = properties;
+
+            if (_onCreateRequest != null)
+            {
+                await _onCreateRequest(
+                    HttpContext, request, properties,
+                    HttpContext.RequestAborted);
+            }
+        }
+
         public async Task SendMessageAsync(
             Stream messageStream,
             CancellationToken cancellationToken)
@@ -114,6 +138,39 @@ namespace HotChocolate.AspNetCore.Subscriptions
                     cancellationToken);
             }
             while (!result.EndOfMessage);
+        }
+
+        public async Task<ConnectionStatus> OpenAsync(
+            IDictionary<string, object> properties)
+        {
+            RequestProperties = properties ?? new Dictionary<string, object>();
+            RequestProperties[nameof(ClaimsIdentity)] = HttpContext.User;
+
+            if (_onConnectAsync == null)
+            {
+                return ConnectionStatus.Accept();
+            }
+
+            return await _onConnectAsync(
+                HttpContext,
+                RequestProperties,
+                HttpContext.RequestAborted);
+        }
+
+        public async Task CloseAsync()
+        {
+            if (WebSocket.CloseStatus.HasValue)
+            {
+                return;
+            }
+
+            // TODO : We  have to provide a description and close status here.
+            await WebSocket.CloseAsync(
+                WebSocketCloseStatus.Empty,
+                "closed",
+                CancellationToken.None);
+
+            Dispose();
         }
 
         public void Dispose()

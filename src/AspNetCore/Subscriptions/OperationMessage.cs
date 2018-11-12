@@ -1,6 +1,6 @@
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public class OperationMessage
+    internal class OperationMessage
     {
         public string Id { get; set; }
 

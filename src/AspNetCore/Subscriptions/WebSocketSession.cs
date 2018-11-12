@@ -9,9 +9,8 @@ using Newtonsoft.Json;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    // TODO : Keep Alive
     // TODO : Hanlde close status
-    public sealed class WebSocketSession
+    internal sealed class WebSocketSession
         : IDisposable
     {
         private const string _protocol = "graphql-ws";
@@ -45,10 +44,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
             }
             finally
             {
-                if (!_cts.IsCancellationRequested)
-                {
-                    _cts.Cancel();
-                }
+                 await _context.CloseAsync();
             }
         }
 
@@ -103,7 +99,8 @@ namespace HotChocolate.AspNetCore.Subscriptions
 
         private async Task KeepConnectionAlive()
         {
-            while (!_cts.IsCancellationRequested)
+            while (!_context.CloseStatus.HasValue
+                || !_cts.IsCancellationRequested)
             {
                 await Task.Delay(_keepAliveTimeout, _cts.Token);
                 await _context.SendConnectionKeepAliveMessageAsync(_cts.Token);
@@ -112,12 +109,15 @@ namespace HotChocolate.AspNetCore.Subscriptions
 
         public void Dispose()
         {
+            _context.Dispose();
             _cts.Dispose();
         }
 
         public static async Task<WebSocketSession> TryCreateAsync(
             HttpContext httpContext,
-            QueryExecuter queryExecuter)
+            QueryExecuter queryExecuter,
+            OnConnectWebSocketAsync onConnectAsync,
+            OnCreateRequestAsync onCreateRequest)
         {
             if (httpContext == null)
             {
@@ -136,12 +136,17 @@ namespace HotChocolate.AspNetCore.Subscriptions
                 .Contains(socket.SubProtocol))
             {
                 var context = new WebSocketContext(
-                    httpContext, socket, queryExecuter);
+                    httpContext, socket, queryExecuter,
+                    onConnectAsync, onCreateRequest);
+
                 return new WebSocketSession(context);
             }
             else
             {
-                // TODO : send error message
+                await socket.CloseAsync(
+                    WebSocketCloseStatus.ProtocolError,
+                    "Expected graphql-ws protocol.",
+                    CancellationToken.None);
                 socket.Dispose();
             }
 

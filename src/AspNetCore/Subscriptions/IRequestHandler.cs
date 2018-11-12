@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public interface IRequestHandler
+    internal interface IRequestHandler
     {
         Task HandleAsync(
             IWebSocketContext context,
@@ -12,10 +12,4 @@ namespace HotChocolate.AspNetCore.Subscriptions
 
         bool CanHandle(GenericOperationMessage message);
     }
-
-
-
-
-
-
 }

@@ -44,7 +44,7 @@ namespace HotChocolate.AspNetCore.Subscriptions
         }
 
         [Fact]
-        public async Task Han_AcceptMessage_False()
+        public async Task Can_AcceptMessage_False()
         {
             // arrange
             var webSocketContext = new InMemoryWebSocketContext();

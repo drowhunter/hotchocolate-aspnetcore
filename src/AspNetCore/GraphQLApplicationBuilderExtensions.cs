@@ -58,7 +58,7 @@ namespace HotChocolate
                 throw new ArgumentNullException(nameof(options));
             }
 
-            var executer = new QueryExecuter(schema, options.QueryCacheSize);
+            var executer = new QueryExecuter(schema);
 
             return applicationBuilder
                 .UseMiddleware<PostQueryMiddleware>(executer, options)

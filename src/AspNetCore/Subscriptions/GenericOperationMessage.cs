@@ -2,7 +2,7 @@
 
 namespace HotChocolate.AspNetCore.Subscriptions
 {
-    public class GenericOperationMessage
+    internal class GenericOperationMessage
         : OperationMessage
     {
         public JObject Payload { get; set; }
