@@ -22,7 +22,7 @@
     <PackageReference Include="OpenCover" Version="4.6.519" />
     <PackageReference Include="Moq" Version="4.8.1" />
     <PackageReference Include="ChilliCream.Testing.Utilities" Version="0.2.0" />
-    <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="0.6.6" />
+    <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="0.6.7" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
