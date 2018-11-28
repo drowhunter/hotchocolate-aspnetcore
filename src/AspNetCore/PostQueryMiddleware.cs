@@ -12,8 +12,6 @@ namespace HotChocolate.AspNetCore
     public class PostQueryMiddleware
         : QueryMiddlewareBase
     {
-        private const string _postMethod = "POST";
-
         public PostQueryMiddleware(
             RequestDelegate next,
             QueryExecuter queryExecuter,
@@ -25,7 +23,8 @@ namespace HotChocolate.AspNetCore
         protected override bool CanHandleRequest(HttpContext context)
         {
             return string.Equals(
-                context.Request.Method, _postMethod,
+                context.Request.Method,
+                HttpMethods.Post,
                 StringComparison.Ordinal);
         }
 

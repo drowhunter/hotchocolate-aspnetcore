@@ -40,7 +40,8 @@ namespace HotChocolate
             return applicationBuilder
                 .UseMiddleware<PostQueryMiddleware>(options)
                 .UseMiddleware<GetQueryMiddleware>(options)
-                .UseMiddleware<SubscriptionMiddleware>(options);
+                .UseMiddleware<SubscriptionMiddleware>(options)
+                .UseMiddleware<SchemaMiddleware>(options);
         }
 
         public static IApplicationBuilder UseGraphQL(
@@ -63,7 +64,8 @@ namespace HotChocolate
             return applicationBuilder
                 .UseMiddleware<PostQueryMiddleware>(executer, options)
                 .UseMiddleware<GetQueryMiddleware>(executer, options)
-                .UseMiddleware<SubscriptionMiddleware>(executer, options);
+                .UseMiddleware<SubscriptionMiddleware>(executer, options)
+                .UseMiddleware<SchemaMiddleware>(executer, options);
         }
     }
 }

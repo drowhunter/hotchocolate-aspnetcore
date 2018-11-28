@@ -15,7 +15,6 @@ namespace HotChocolate.AspNetCore
         private static readonly string _operationNameIdentifier = "operationName";
         private static readonly string _variablesIdentifier = "variables";
         private static readonly string _namedQueryIdentifier = "namedQuery";
-        private static readonly string _getMethod = "GET";
 
         public GetQueryMiddleware(
             RequestDelegate next,
@@ -28,7 +27,8 @@ namespace HotChocolate.AspNetCore
         protected override bool CanHandleRequest(HttpContext context)
         {
             return string.Equals(
-                context.Request.Method, _getMethod,
+                context.Request.Method,
+                HttpMethods.Get,
                 StringComparison.Ordinal)
                 && HasQueryParameter(context);
         }
