@@ -25,9 +25,11 @@ namespace StarWars
             services.AddSingleton<CharacterRepository>();
             services.AddSingleton<ReviewRepository>();
 
-            services.AddSingleton<Query>();
-            services.AddSingleton<Mutation>();
-            services.AddSingleton<Subscription>();
+            // if you want query, mutation, or subscription as a singleton
+            // register them with your services
+            // services.AddSingleton<Query>();
+            // services.AddSingleton<Mutation>();
+            // services.AddSingleton<Subscription>();
 
             // Add in-memory event provider
             var eventRegistry = new InMemoryEventRegistry();
@@ -37,7 +39,9 @@ namespace StarWars
             // Add GraphQL Services
             services.AddGraphQL(sp => Schema.Create(c =>
             {
-                c.RegisterServiceProvider(sp);
+                // this one is only necessary if you use dependency injection
+                // in schema types
+                // c.RegisterServiceProvider(sp);
 
                 // Adds the authorize directive and
                 // enable the authorization middleware.
