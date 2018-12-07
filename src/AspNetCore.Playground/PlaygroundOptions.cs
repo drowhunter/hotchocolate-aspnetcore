@@ -5,10 +5,10 @@ namespace HotChocolate.AspNetCore.Playground
 {
     public class PlaygroundOptions
     {
-        private PathString _path = "/ui/playground";
+        private PathString _path = "/playground";
         private PathString _queryPath = "/";
         private PathString _subscriptionPath = "/ws";
-        
+
         public PathString Path
         {
             get => _path;

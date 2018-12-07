@@ -28,10 +28,10 @@ namespace HotChocolate.AspNetCore.GraphiQL
             });
         }
 
-         public static void UseGraphiQL(
-            this IApplicationBuilder applicationBuilder,
-            PathString queryPath,
-            PathString uiPath)
+        public static void UseGraphiQL(
+           this IApplicationBuilder applicationBuilder,
+           PathString queryPath,
+           PathString uiPath)
         {
             UseGraphiQL(applicationBuilder, new GraphiQLOptions
             {

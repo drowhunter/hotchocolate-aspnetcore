@@ -12,7 +12,7 @@ namespace HotChocolate.AspNetCore.Playground
             "HotChocolate.AspNetCore.Playground.Resources";
 
         /// <summary>
-        /// Add GraphQL Playground UI to address '/ui/playground'
+        /// Add GraphQL Playground UI to address '/playground'
         /// </summary>
         /// <param name="applicationBuilder"></param>
         public static void UsePlayground(
@@ -22,7 +22,8 @@ namespace HotChocolate.AspNetCore.Playground
         }
 
         /// <summary>
-        /// Add GraphQL Playground UI to address '/ui/playground' relative to GraphQL endpoint
+        /// Add GraphQL Playground UI to address '/playground'
+        /// relative to GraphQL endpoint
         /// </summary>
         /// <param name="applicationBuilder"></param>
         /// <param name="queryPath"></param>
@@ -33,7 +34,7 @@ namespace HotChocolate.AspNetCore.Playground
             UsePlayground(applicationBuilder, new PlaygroundOptions
             {
                 QueryPath = queryPath,
-                Path = queryPath + "/ui/playground"
+                Path = queryPath + "/playground"
             });
         }
 

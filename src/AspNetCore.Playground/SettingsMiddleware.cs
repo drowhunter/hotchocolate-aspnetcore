@@ -10,11 +10,13 @@ namespace HotChocolate.AspNetCore.Playground
         private readonly string _queryPath;
         private readonly string _subscriptionPath;
 
-        public SettingsMiddleware(RequestDelegate next, PlaygroundOptions options)
+        public SettingsMiddleware(
+            RequestDelegate next,
+            PlaygroundOptions options)
         {
             if (options == null)
             {
-                throw new ArgumentNullException(nameof(options));   
+                throw new ArgumentNullException(nameof(options));
             }
 
             _queryPath = options.QueryPath;
@@ -24,8 +26,9 @@ namespace HotChocolate.AspNetCore.Playground
         public async Task InvokeAsync(HttpContext context)
         {
             string queryUrl = BuildUrl(context.Request, false, _queryPath);
-            string subscriptionUrl = BuildUrl(context.Request, true, _subscriptionPath);
- 
+            string subscriptionUrl =
+                BuildUrl(context.Request, true, _subscriptionPath);
+
             context.Response.ContentType = "application/javascript";
 
             await context.Response.WriteAsync($@"

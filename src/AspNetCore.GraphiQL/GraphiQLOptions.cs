@@ -5,7 +5,7 @@ namespace HotChocolate.AspNetCore.GraphiQL
 {
     public class GraphiQLOptions
     {
-        private PathString _path = "/ui";
+        private PathString _path = "/graphiql";
         private PathString _queryPath = "/";
         private PathString _subscriptionPath = "/ws";
 

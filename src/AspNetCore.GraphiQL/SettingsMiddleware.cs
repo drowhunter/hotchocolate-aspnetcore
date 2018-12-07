@@ -14,7 +14,7 @@ namespace HotChocolate.AspNetCore.GraphiQL
         {
             if (options == null)
             {
-                throw new ArgumentNullException(nameof(options));   
+                throw new ArgumentNullException(nameof(options));
             }
 
             _queryPath = options.QueryPath;
@@ -24,7 +24,8 @@ namespace HotChocolate.AspNetCore.GraphiQL
         public async Task InvokeAsync(HttpContext context)
         {
             string queryUrl = BuildUrl(context.Request, false, _queryPath);
-            string subscriptionUrl = BuildUrl(context.Request, true, _subscriptionPath);
+            string subscriptionUrl =
+                BuildUrl(context.Request, true, _subscriptionPath);
 
             context.Response.ContentType = "application/javascript";
 
