@@ -24,7 +24,7 @@ namespace HotChocolate.AspNetCore.GraphiQL
             UseGraphiQL(applicationBuilder, new GraphiQLOptions
             {
                 QueryPath = queryPath,
-                Path = queryPath + "/ui"
+                Path = queryPath + "/graphiql"
             });
         }
 
