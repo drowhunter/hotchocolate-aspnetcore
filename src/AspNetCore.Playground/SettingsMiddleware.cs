@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 
-namespace HotChocolate.AspNetCore.GraphiQL
+namespace HotChocolate.AspNetCore.Playground
 {
     internal sealed class SettingsMiddleware
     {
         private readonly string _queryPath;
         private readonly string _subscriptionPath;
 
-        public SettingsMiddleware(RequestDelegate next, GraphiQLOptions options)
+        public SettingsMiddleware(RequestDelegate next, PlaygroundOptions options)
         {
             if (options == null)
             {
@@ -25,7 +25,7 @@ namespace HotChocolate.AspNetCore.GraphiQL
         {
             string queryUrl = BuildUrl(context.Request, false, _queryPath);
             string subscriptionUrl = BuildUrl(context.Request, true, _subscriptionPath);
-
+ 
             context.Response.ContentType = "application/javascript";
 
             await context.Response.WriteAsync($@"

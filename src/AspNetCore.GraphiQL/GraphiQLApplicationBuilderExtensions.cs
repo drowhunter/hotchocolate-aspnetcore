@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Reflection;
-using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 
-namespace HotChocolate
+namespace HotChocolate.AspNetCore.GraphiQL
 {
     public static class GraphiQLApplicationBuilderExtensions
     {
-        private const string _resourcesNamespace =
-            "HotChocolate.AspNetCore.Resources";
+        private const string ResourcesNamespace =
+            "HotChocolate.AspNetCore.GraphiQL.Resources";
 
         public static void UseGraphiQL(
             this IApplicationBuilder applicationBuilder)
@@ -87,7 +85,7 @@ namespace HotChocolate
 
             return new EmbeddedFileProvider(
                 type.Assembly,
-                _resourcesNamespace);
+                ResourcesNamespace);
         }
     }
 }

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using HotChocolate;
-using HotChocolate.AspNetCore;
+using HotChocolate.AspNetCore.GraphiQL;
+using HotChocolate.AspNetCore.Playground;
 using HotChocolate.Subscriptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using StarWars.Data;
 using StarWars.Types;
@@ -74,7 +70,9 @@ namespace StarWars
 
             app.UseGraphQL("/graphql");
             app.UseGraphiQL("/graphql");
+            app.UsePlayground("/graphql");
 
+            // app.UseHttpsRedirection();
             /*
             Note: comment app.UseGraphQL("/graphql"); and uncomment this
             section in order to simulare a user that has a country claim and

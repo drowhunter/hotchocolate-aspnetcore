@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\src\AspNetCore\AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore.Authorization\AspNetCore.Authorization.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore.GraphiQL\AspNetCore.GraphiQL.csproj" />
+    <ProjectReference Include="..\..\src\AspNetCore.Playground\AspNetCore.Playground.csproj" />
   </ItemGroup>
 
 </Project>

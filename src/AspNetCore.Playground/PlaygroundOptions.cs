@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace HotChocolate.AspNetCore.GraphiQL
+namespace HotChocolate.AspNetCore.Playground
 {
-    public class GraphiQLOptions
+    public class PlaygroundOptions
     {
-        private PathString _path = "/ui";
+        private PathString _path = "/ui/playground";
         private PathString _queryPath = "/";
         private PathString _subscriptionPath = "/ws";
-
+        
         public PathString Path
         {
             get => _path;
