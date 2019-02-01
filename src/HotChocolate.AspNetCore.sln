@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.GraphiQL", "AspNetCore.GraphiQL\AspNetCore.GraphiQL.csproj", "{491B8388-C02C-4111-83E9-C2DD9A889E4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.GraphiQL", "AspNetCore.GraphiQL\AspNetCore.GraphiQL.csproj", "{491B8388-C02C-4111-83E9-C2DD9A889E4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Authorization", "AspNetCore.Authorization\AspNetCore.Authorization.csproj", "{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Authorization", "AspNetCore.Authorization\AspNetCore.Authorization.csproj", "{BC77ACA4-FC6D-4DD6-B289-B649A7AB0FD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore", "AspNetCore\AspNetCore.csproj", "{9AE10C08-6F38-440A-BDF3-E6AA91BBADE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore", "AspNetCore\AspNetCore.csproj", "{9AE10C08-6F38-440A-BDF3-E6AA91BBADE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Tests", "AspNetCore.Tests\AspNetCore.Tests.csproj", "{C2F54C34-7209-404D-9DB5-D5E4BAABF8B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Tests", "AspNetCore.Tests\AspNetCore.Tests.csproj", "{C2F54C34-7209-404D-9DB5-D5E4BAABF8B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarWars", "..\examples\StarWars\StarWars.csproj", "{06D45B1E-9782-4F99-891B-072351E1116F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarWars", "..\examples\StarWars\StarWars.csproj", "{06D45B1E-9782-4F99-891B-072351E1116F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Playground", "AspNetCore.Playground\AspNetCore.Playground.csproj", "{CD5ECB46-0223-4BA1-A75E-C10694E5A8FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Playground", "AspNetCore.Playground\AspNetCore.Playground.csproj", "{CD5ECB46-0223-4BA1-A75E-C10694E5A8FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Voyager", "AspNetCore.Voyager\AspNetCore.Voyager.csproj", "{D568C371-CEE7-49B3-9586-FCA1FA7F016F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,9 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{491B8388-C02C-4111-83E9-C2DD9A889E4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -100,5 +99,23 @@ Global
 		{CD5ECB46-0223-4BA1-A75E-C10694E5A8FD}.Release|x64.Build.0 = Release|Any CPU
 		{CD5ECB46-0223-4BA1-A75E-C10694E5A8FD}.Release|x86.ActiveCfg = Release|Any CPU
 		{CD5ECB46-0223-4BA1-A75E-C10694E5A8FD}.Release|x86.Build.0 = Release|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Debug|x64.Build.0 = Debug|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Debug|x86.Build.0 = Debug|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Release|x64.ActiveCfg = Release|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Release|x64.Build.0 = Release|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Release|x86.ActiveCfg = Release|Any CPU
+		{D568C371-CEE7-49B3-9586-FCA1FA7F016F}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0432DBD1-7691-4BFD-B504-5275C4291235}
 	EndGlobalSection
 EndGlobal
